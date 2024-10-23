@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Gateway</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .causes-item {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .btn-custom {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-custom:hover {
+            background-color: #45a049;
+        }
+        .cart-items {
+            margin: 20px 0;
+            text-align: left;
+        }
+        input[type="number"] {
+            width: 50px;
+        }
+        .checkout-details {
+            display: none;
+            text-align: left;
+        }
+        .qr-code {
+            margin: 20px 0;
+        }
+        .checkout-form {
+            display: none;
+        }
+        .button-group {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .button-group a, .button-group button {
+            margin: 0 10px;
+        }
+        .btn-download {
+            display: none;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@aptos-labs/aptos-sdk/dist/aptos-sdk.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <h2>Your Cart</h2>
+
+    <div class="causes-item">
+        <div class="causes-img">
+            <img src="img/ld.jpg" alt="Lamp Driver" width="200">
+        </div>
+        <div class="causes-text">
+            <h3>Lamp Driver</h3>
+        </div>
+        <div class="causes-btn">
+            <input type="number" id="quantity-1" placeholder="Qty" min="1" value="1">
+            <button class="btn btn-custom" onclick="addToCart('Lamp Driver', document.getElementById('quantity-1').value, 1200)">Add to Cart</button>
+        </div>
+    </div>
+
+    <div id="checkoutForm" class="checkout-form">
+        <h3>Enter Your Personal Details</h3>
+        <form id="personalDetailsForm" onsubmit="showCartSummary(event)">
+            <label for="name">Full Name:</label><br>
+            <input type="text" id="name" name="name" required><br><br>
+
+            <label for="email">Email:</label><br>
+            <input type="email" id="email" name="email" required><br><br>
+
+            <label for="address">Address:</label><br>
+            <textarea id="address" name="address" required></textarea><br><br>
+
+            <button type="submit" class="btn btn-custom">Proceed to Payment</button>
+        </form>
+    </div>
+
+    <div id="checkoutDetails" class="checkout-details">
+        <h3>Cart Summary</h3>
+        <div id="cartSummary"></div>
+        <h3>Total: ₹<span id="totalAmount"></span></h3>
+
+        <!-- Pre-loaded QR Code Image -->
+        <div class="qr-code">
+            <img src="img/qrc.jpg" alt="QR Code for Payment" width="200">
+        </div>
+
+        <div class="button-group">
+            <button class="btn btn-custom" onclick="makePayment()">Pay Now</button>
+            <a href="lib/Payment%20Receipt.pdf" class="btn btn-custom btn-download" download>Download Payment Receipt</a>
+        </div>
+    </div>
+</div>
+
+<script>
+// Cart functionality
+let cart = {};
+let totalAmount = 0;
+
+function addToCart(productName, quantity, price) {
+    cart = { productName, quantity, price };
+    totalAmount = quantity * price;
+    document.getElementById('checkoutForm').style.display = 'block'; // Show form for personal details
+}
+
+function showCartSummary(event) {
+    event.preventDefault();
+    
+    // Retrieve personal details
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const address = document.getElementById('address').value;
+
+    // Display cart and summary after details are filled
+    displayCartSummary();
+}
+
+function displayCartSummary() {
+    const cartSummary = document.getElementById('cartSummary');
+    cartSummary.innerHTML = `<p>${cart.productName} (Quantity: ${cart.quantity})</p>`;
+    document.getElementById('totalAmount').textContent = totalAmount;
+    
+    document.getElementById('checkoutForm').style.display = 'none';  // Hide personal details form
+    document.getElementById('checkoutDetails').style.display = 'block'; // Show cart and payment section
+}
+
+// Payment simulation using Aptos Wallet (simulated)
+async function makePayment() {
+    const name = document.getElementById('name').value;
+
+    console.log('Processing payment for', name);
+
+    if (confirm('Do you want to proceed with the payment?')) {
+        try {
+            // Simulated success response
+            alert(`Payment successful for ${name}! Total Amount: ₹${totalAmount}`);
+            document.querySelector('.btn-download').style.display = 'inline-block'; // Show the download button
+        } catch (error) {
+            console.error('Payment failed:', error);
+            alert('Payment failed. Please try again.');
+        }
+    }
+}
+</script>
+
+</body>
+</html>
